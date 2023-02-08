@@ -25,7 +25,7 @@ pod 'ZZCustomControl'
 
 ## Author
 
-czz_8023, 1039776732@qq.com
+CzzBoom, 1039776732@qq.com
 
 ## License
 
