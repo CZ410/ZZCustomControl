@@ -220,7 +220,7 @@ open class ZZScrollView: UIScrollView {
             }
             totalHeight += (item.contentSize.height + item.inset.top + item.inset.bottom)
         }
-        let newContentSize = CGSize(self.zz_width, totalHeight)
+        let newContentSize = CGSize(width: self.zz_width, height: totalHeight)
         if self.contentSize != newContentSize{
             self.contentSize = newContentSize
         }
