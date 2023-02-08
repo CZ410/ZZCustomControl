@@ -20,6 +20,9 @@ it, simply add the following line to your Podfile:
 pod 'ZZCustomControl'
 ```
 
+
+![Image text](https://github.com/CZ410/ZZCustomControl/blob/main/Images/data.png)
+
 ## Author
 
 czz_8023, 1039776732@qq.com
