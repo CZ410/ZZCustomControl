@@ -10,10 +10,10 @@ import UIKit
 import WebKit
 import ZZBase
 
-open class ZZScrollView: UIScrollView {
-    @objc public class ZZScrollItem: Item{ }
+public class ZZScrollView: UIScrollView {
+    public class ZZScrollItem: Item{ }
     
-    @objc public class Item: NSObject {
+    public class Item: NSObject {
         
         /// 初始化一个ZZScrollView.Item
         /// - Parameters:
@@ -21,7 +21,7 @@ open class ZZScrollView: UIScrollView {
         ///   - inset: 内容相对缩进量
         ///   - minHeight: 最低高度
         ///   - fixedWidth: 固定宽度 与inset 冲突  当大于0 时 inset left right 失效
-        @objc public init(view: UIView, inset: UIEdgeInsets = .zero, minHeight: CGFloat = 0, fixedWidth: CGFloat = 0, maxHeight: CGFloat = 0) {
+        public init(view: UIView, inset: UIEdgeInsets = .zero, minHeight: CGFloat = 0, fixedWidth: CGFloat = 0, maxHeight: CGFloat = 0) {
             super.init()
             self.view = view
             self.inset = inset
@@ -37,7 +37,7 @@ open class ZZScrollView: UIScrollView {
         ///   - inset: insets
         ///   - height: 高度
         ///   - fixedWidth: 如果需要固定宽度  传大于0
-        @objc public init(line color: UIColor = UIColor.lightGray, inset: UIEdgeInsets = .zero, height: CGFloat = 6, fixedWidth: CGFloat = 0, maxHeight: CGFloat = 0){
+        public init(line color: UIColor = UIColor.lightGray, inset: UIEdgeInsets = .zero, height: CGFloat = 6, fixedWidth: CGFloat = 0, maxHeight: CGFloat = 0){
             super.init()
             let view = UIView()
             view.backgroundColor = color
@@ -48,20 +48,20 @@ open class ZZScrollView: UIScrollView {
             self.maxHeight = maxHeight
             self.addObserver()
         }
-
+        
         deinit {
             self.removeObserver()
             self.view.zz_remoAllObservers()
         }
-
+        
         private(set) public var minHeight: CGFloat = 0
         private(set) public var maxHeight: CGFloat = 0 // 当view 不为 uiscorollview及其子类时生效
         private(set) public var fixedWidth: CGFloat = 0 // 与inset 冲突  当大于0 时 inset left right 失效
         private(set) public var view: UIView!
         @objc public dynamic var inset: UIEdgeInsets = .zero
-        @objc private(set) public dynamic var contentSize: CGSize = .zero
-        @objc private(set) public dynamic var isHidden: Bool = false
-
+        private(set) public dynamic var contentSize: CGSize = .zero
+        private(set) public dynamic var isHidden: Bool = false
+        
         private func addObserver(){
             if self.view is UIScrollView{
                 let scView = self.view as! UIScrollView
@@ -104,7 +104,7 @@ open class ZZScrollView: UIScrollView {
                 self?.isHidden = self?.view.isHidden ?? false
             }
         }
-
+        
         private func removeObserver(){
             if self.view is UIScrollView{
                 let scView = self.view as! UIScrollView
@@ -117,36 +117,36 @@ open class ZZScrollView: UIScrollView {
             }
         }
     }
-
+    
     deinit {
         self.zz_remoAllObservers()
     }
-
+    
     override public init(frame: CGRect) {
         super.init(frame: frame)
         self._init()
     }
-
+    
     public init(items: [Item] = []) {
         super.init(frame: .zero)
         self.items = items
         self._init()
         self.addItems()
     }
-
+    
     required public init?(coder: NSCoder) {
         super.init(coder: coder)
         self._init()
     }
-
+    
     private func _init(){
         self.zz_addObserver("contentOffset", block: { [weak self] _ in
             self?.refreshOffset()
         })
         self.refreshOffset()
     }
-
-    open var items: [Item] = []{
+    
+    public var items: [Item] = []{
         willSet{
             self.items.forEach({ $0.view.removeFromSuperview() })
         }
@@ -154,7 +154,7 @@ open class ZZScrollView: UIScrollView {
             self.addItems()
         }
     }
-
+    
     private func addItems(){
         self.items.forEach({
             self.addSubview($0.view)
@@ -164,8 +164,8 @@ open class ZZScrollView: UIScrollView {
         })
         self.refreshOffset()
     }
-
-    open func refreshOffset(){
+    
+    public func refreshOffset(){
         let offset = self.contentOffset.y
         /*
          1、contentSize.height 在页面内 跟着父窗体滚动
@@ -220,16 +220,16 @@ open class ZZScrollView: UIScrollView {
             }
             totalHeight += (item.contentSize.height + item.inset.top + item.inset.bottom)
         }
-        let newContentSize = CGSize(self.zz_width, totalHeight)
+        let newContentSize = CGSize(width: self.zz_width, height: totalHeight)
         if self.contentSize != newContentSize{
             self.contentSize = newContentSize
         }
-
+        
     }
-
-    override open func layoutSubviews() {
+    
+    override public func layoutSubviews() {
         super.layoutSubviews()
         self.refreshOffset()
     }
-
+    
 }
