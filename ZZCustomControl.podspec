@@ -8,8 +8,8 @@
 
 Pod::Spec.new do |s|
   s.name             = 'ZZCustomControl'
-  s.version          = '0.1.0'
-  s.summary          = '基于ZZBase开发的一些好用的组件。'
+  s.version          = '0.1.1'
+  s.summary          = '基于ZZBase开发的一些好用的组件.'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-                        基于ZZBase开发的一些好用的组件（比如：ZZUIbutton、ZZScrollView、ZZPageControl、ZZDrawerView、ZZNavCtrl等）
+                        基于ZZBase开发的一些好用的组件（ZZScrollView、ZZDrawerView、ZZUINavigationCtrl、ZZPageControl、ZZUIButton、UIScrollView+InsetView等 ）
                        DESC
 
   s.homepage         = 'https://github.com/CZ410'
