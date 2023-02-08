@@ -9,35 +9,46 @@
 import UIKit
 import ZZBase
 
-open class ZZUINavigationCtrl: UINavigationController {
+public class ZZUINavigationCtrl: UINavigationController {
 
     private var currentShowVc : UIViewController? = nil
 
-    @objc open func backAction(){
+    @objc public func backAction(){
         self.popViewController(animated: true)
     }
+    
+//    public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+//        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+//        _init()
+//    }
+//
+//    public required init?(coder aDecoder: NSCoder) {
+//        super.init(coder: aDecoder)
+//        _init()
+//    }
+//
+//    private func _init(){
+//        if #available(iOS 13, *) {
+//            backImage = UIImage(systemName: "arrow.backward")
+//        } else {
+//
+//        }
+//    }
 
-    static public var backImage: UIImage? = UIImage(systemName: "arrow.backward")
+    static public var backImage: UIImage? = nil
 
-    open func backButton() -> ZZUIButton {
+    public func backButton() -> ZZUIButton {
         let button = ZZUIButton.init()
-//        button.image(image: UIImage.named(name: "btn-fh-black")?.imageWithColor(.white), state: .normal)
         button.set(image: ZZUINavigationCtrl.backImage, state: .normal)
             .contentAlignment(.LeftCenter)
             .imageAlignment(.LeftCenter)
             .contentOffset(CGPoint(x: 15, y: 0))
             .zz_size(CGSize(width: 50, height: 44))
-
-//        button.setImage(UIImage.named(name: "btn-fh-black")?.imageWithColor(DefaultblackColor), for: .normal)
-//        button.size = CGSize.init(width: 50, height: 44)
-//        button.contentHorizontalAlignment = UIControl.ContentHorizontalAlignment.left
-//        button.imageEdgeInsets = UIEdgeInsets.init(top: 0, left: 0, bottom: 0, right: 0)
-//        button.backgroundColor = UIColor.clear
-        button.addTarget(self, action: #selector(backAction), for: .touchUpInside)
+            .zz_addTarget(self, action: #selector(backAction), for: .touchUpInside)
         return button
     }
     
-    override public func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         if (self.responds(to: #selector(getter: interactivePopGestureRecognizer))) {
@@ -56,7 +67,7 @@ open class ZZUINavigationCtrl: UINavigationController {
     }
     */
     
-    open func setPushViewCtrBlock(pushNavCtrl:ZZUINavigationPushCtrl) -> Void {
+    public func setPushViewCtrBlock(pushNavCtrl:ZZUINavigationPushCtrl) -> Void {
         pushNavCtrl.pushViewCtrlBlock = {[weak self] viewCtrl,animat in
             self?.pushViewController(viewCtrl, animated: animat)
         }
@@ -104,7 +115,7 @@ open class ZZUINavigationCtrl: UINavigationController {
 }
 
 extension ZZUINavigationCtrl : UINavigationControllerDelegate{
-    override public func pushViewController(_ viewController: UIViewController, animated: Bool) {
+    public override func pushViewController(_ viewController: UIViewController, animated: Bool) {
         let pushNavCtrl = ZZUINavigationPushCtrl.init()
         self.setPushViewCtrBlock(pushNavCtrl: pushNavCtrl)
         

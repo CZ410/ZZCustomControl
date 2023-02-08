@@ -8,8 +8,8 @@
 
 import UIKit
 import WebKit
+import ZZBase
 
-@objcMembers
 open class ZZScrollView: UIScrollView {
     @objc public class ZZScrollItem: Item{ }
     
