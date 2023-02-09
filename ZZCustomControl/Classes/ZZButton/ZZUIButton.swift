@@ -795,6 +795,10 @@ import ZZBase
         
         widthA.constant = maxWidth
         heightA.constant = maxHeight
+        
+        var constraints = self.constraints
+        constraints.removeAll(where: {$0 == widthA || $0 == heightA})
+        self.translatesAutoresizingMaskIntoConstraints = constraints.count == 0
     }
     
     /// 刷新content对其方式
