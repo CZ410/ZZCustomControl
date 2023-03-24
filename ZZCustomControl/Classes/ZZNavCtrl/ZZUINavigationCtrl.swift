@@ -12,23 +12,25 @@ import ZZBase
 public class ZZUINavigationCtrl: UINavigationController {
 
     private var currentShowVc : UIViewController? = nil
-
+    
     static public var backImage: UIImage? = nil
     
-    static public var backButton: UIView = {
-        let button = ZZUIButton.init()
+    @objc private func backAction(){
+        self.popViewController(animated: true)
+    }
+    
+    fileprivate var backButton: ZZUIButton{
+        let button = ZZUIButton()
         button.set(image: ZZUINavigationCtrl.backImage, state: .normal)
             .contentAlignment(.LeftCenter)
             .imageAlignment(.LeftCenter)
             .contentOffset(CGPoint(x: 15, y: 0))
             .zz_size(CGSize(width: 50, height: 44))
-            .zz_addTap(block: { sender in
-                UIWindow.zz_getCurrentViewCtrl()?.zz_pop()
-            })
+            .zz_addTarget(self, action: #selector(backAction), for: .touchUpInside)
             .translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([button.widthAnchor.constraint(equalToConstant: 50), button.heightAnchor.constraint(equalToConstant: 44)])
         return button
-    }()
+    }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -88,10 +90,10 @@ public class ZZUINavigationCtrl: UINavigationController {
 
 extension ZZUINavigationCtrl : UINavigationControllerDelegate{
     public override func pushViewController(_ viewController: UIViewController, animated: Bool) {
-        let pushNavCtrl = ZZUINavigationPushCtrl.init()
+        let pushNavCtrl = ZZUINavigationPushCtrl()
         self.setPushViewCtrBlock(pushNavCtrl: pushNavCtrl)
         
-        let subViewCtrl = ZZPushContentViewCtrl.init()
+        let subViewCtrl = ZZPushContentViewCtrl()
         subViewCtrl.view.addSubview(pushNavCtrl.view)
         subViewCtrl.addChild(pushNavCtrl)
         pushNavCtrl.viewControllers = [viewController]
@@ -99,7 +101,7 @@ extension ZZUINavigationCtrl : UINavigationControllerDelegate{
         if self.viewControllers.count > 0 {
             subViewCtrl.hidesBottomBarWhenPushed = true
             viewController.navigationItem.hidesBackButton = false
-            viewController.navigationItem.leftBarButtonItem = UIBarButtonItem.init(customView: ZZUINavigationCtrl.backButton)
+            viewController.navigationItem.leftBarButtonItem = UIBarButtonItem.init(customView: self.backButton)
         }
         super.pushViewController(subViewCtrl, animated: animated)
     }
@@ -153,6 +155,13 @@ public class ZZPushContentViewCtrl: UIViewController {
 
     public override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation{
         return (self.children.last as? ZZUINavigationPushCtrl)?.viewControllers.last?.preferredInterfaceOrientationForPresentation ?? .portrait
+    }
+}
+
+public extension ZZFatherViewCtrl{
+    var zz_navBackButton: ZZUIButton?{
+        let leftItem = self.navigationItem.leftBarButtonItem
+        return leftItem?.customView as? ZZUIButton
     }
 }
 

@@ -10,7 +10,7 @@ import UIKit
 
 /// 创建一个灰色滤镜的View（实现哀悼模式可将此View添加到window最上层）
 @available(iOS 12.0, *)
-class ZZGrayLayerView: UIView {
+public class ZZGrayLayerView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         initView()
@@ -27,7 +27,7 @@ class ZZGrayLayerView: UIView {
     }
     
     /// 不处理任何事件
-    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+    public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         return nil
     }
 }

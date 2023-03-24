@@ -9,16 +9,16 @@ import Foundation
 import UIKit
 import ZZBase
 
-class ZZUICollectionViewLayoutSectionBgAttributes: UICollectionViewLayoutAttributes{
+public class ZZUICollectionViewLayoutSectionBgAttributes: UICollectionViewLayoutAttributes{
     var backgroundColor: UIColor?
     var backgroundImage: UIImage?
     var rectCorner: UIRectCorner = []
     var cornerRadii: CGFloat = 0
 }
 
-class ZZUICollectionViewSectionBgView: UICollectionReusableView{
+public class ZZUICollectionViewSectionBgView: UICollectionReusableView{
     
-    override func apply(_ layoutAttributes: UICollectionViewLayoutAttributes) {
+    public override func apply(_ layoutAttributes: UICollectionViewLayoutAttributes) {
         super.apply(layoutAttributes)
         
         bgView.frame = bounds
@@ -45,7 +45,7 @@ class ZZUICollectionViewSectionBgView: UICollectionReusableView{
     }()
 }
 
-protocol ZZUICollectionViewSectionBgLayoutDelegate: UICollectionViewDelegateFlowLayout {
+public protocol ZZUICollectionViewSectionBgLayoutDelegate: UICollectionViewDelegateFlowLayout {
     /// 背景颜色
     func backgroundColor(collectionView: UICollectionView, layout: UICollectionViewLayout, section: Int) -> UIColor?
     /// 圆角位置UIRectCorner
@@ -57,7 +57,7 @@ protocol ZZUICollectionViewSectionBgLayoutDelegate: UICollectionViewDelegateFlow
 }
 
 // 实现可选
-extension ZZUICollectionViewSectionBgLayoutDelegate{
+public extension ZZUICollectionViewSectionBgLayoutDelegate{
     func backgroundColor(collectionView: UICollectionView, layout: UICollectionViewLayout, section: Int) -> UIColor?{
         return nil
     }
@@ -73,7 +73,7 @@ extension ZZUICollectionViewSectionBgLayoutDelegate{
 }
 
 /// 实现UICollection Section背景功能（以一个分组为单位）
-class ZZUICollectionViewSectionBgLayout : UICollectionViewFlowLayout{
+public class ZZUICollectionViewSectionBgLayout : UICollectionViewFlowLayout{
     weak var delegate: ZZUICollectionViewSectionBgLayoutDelegate?
     fileprivate var decorationViewAttrs = [UICollectionViewLayoutAttributes]()
     
@@ -95,7 +95,7 @@ class ZZUICollectionViewSectionBgLayout : UICollectionViewFlowLayout{
         self .register(ZZUICollectionViewSectionBgView.self, forDecorationViewOfKind: section_bg_layout_id)
     }
     
-    override func prepare() {
+    public override func prepare() {
         super.prepare()
         
         guard let numberOfSections = collectionView?.numberOfSections,
@@ -160,7 +160,7 @@ class ZZUICollectionViewSectionBgLayout : UICollectionViewFlowLayout{
         }
     }
     
-    override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
+    public override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         let att = super.layoutAttributesForElements(in: rect) ?? []
         var atts = [UICollectionViewLayoutAttributes]()
         atts.append(contentsOf: att)
