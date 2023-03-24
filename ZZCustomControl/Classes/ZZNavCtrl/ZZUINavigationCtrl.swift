@@ -36,17 +36,19 @@ public class ZZUINavigationCtrl: UINavigationController {
 //    }
 
     static public var backImage: UIImage? = nil
-
-    public func backButton() -> ZZUIButton {
+    
+    static public var backButton: UIView = {
         let button = ZZUIButton.init()
         button.set(image: ZZUINavigationCtrl.backImage, state: .normal)
             .contentAlignment(.LeftCenter)
             .imageAlignment(.LeftCenter)
             .contentOffset(CGPoint(x: 15, y: 0))
             .zz_size(CGSize(width: 50, height: 44))
-            .zz_addTarget(self, action: #selector(backAction), for: .touchUpInside)
+            .zz_addTarget(ZZUINavigationCtrl.self, action: #selector(backAction), for: .touchUpInside)
+            .translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([button.widthAnchor.constraint(equalToConstant: 50), button.heightAnchor.constraint(equalToConstant: 44)])
         return button
-    }
+    }()
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -127,7 +129,7 @@ extension ZZUINavigationCtrl : UINavigationControllerDelegate{
         if self.viewControllers.count > 0 {
             subViewCtrl.hidesBottomBarWhenPushed = true
             viewController.navigationItem.hidesBackButton = false
-            viewController.navigationItem.leftBarButtonItem = UIBarButtonItem.init(customView: self.backButton())
+            viewController.navigationItem.leftBarButtonItem = UIBarButtonItem.init(customView: ZZUINavigationCtrl.backButton)
         }
         super.pushViewController(subViewCtrl, animated: animated)
     }
