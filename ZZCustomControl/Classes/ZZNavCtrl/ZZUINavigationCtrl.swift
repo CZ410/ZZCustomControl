@@ -13,28 +13,6 @@ public class ZZUINavigationCtrl: UINavigationController {
 
     private var currentShowVc : UIViewController? = nil
 
-    @objc public func backAction(){
-        self.popViewController(animated: true)
-    }
-    
-//    public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-//        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-//        _init()
-//    }
-//
-//    public required init?(coder aDecoder: NSCoder) {
-//        super.init(coder: aDecoder)
-//        _init()
-//    }
-//
-//    private func _init(){
-//        if #available(iOS 13, *) {
-//            backImage = UIImage(systemName: "arrow.backward")
-//        } else {
-//
-//        }
-//    }
-
     static public var backImage: UIImage? = nil
     
     static public var backButton: UIView = {
@@ -44,7 +22,9 @@ public class ZZUINavigationCtrl: UINavigationController {
             .imageAlignment(.LeftCenter)
             .contentOffset(CGPoint(x: 15, y: 0))
             .zz_size(CGSize(width: 50, height: 44))
-            .zz_addTarget(ZZUINavigationCtrl.self, action: #selector(backAction), for: .touchUpInside)
+            .zz_addTap(block: { sender in
+                UIWindow.zz_getCurrentViewCtrl()?.zz_pop()
+            })
             .translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([button.widthAnchor.constraint(equalToConstant: 50), button.heightAnchor.constraint(equalToConstant: 44)])
         return button
@@ -52,22 +32,12 @@ public class ZZUINavigationCtrl: UINavigationController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
         if (self.responds(to: #selector(getter: interactivePopGestureRecognizer))) {
             self.interactivePopGestureRecognizer?.delegate = self
             self.delegate = self
         }
         self.setNavigationBarHidden(true, animated: false)
     }
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
     
     public func setPushViewCtrBlock(pushNavCtrl:ZZUINavigationPushCtrl) -> Void {
         pushNavCtrl.pushViewCtrlBlock = {[weak self] viewCtrl,animat in
