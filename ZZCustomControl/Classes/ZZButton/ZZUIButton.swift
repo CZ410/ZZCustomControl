@@ -527,7 +527,7 @@ import ZZBase
     /// contentview的偏移量
     open var contentOffset : CGPoint = CGPoint.zero {
         didSet {
-            self.flushContentOffSet()
+            flushContentAlignment()
         }
     }
     
