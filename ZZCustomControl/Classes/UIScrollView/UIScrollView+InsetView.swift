@@ -75,7 +75,7 @@ public extension UIScrollView{
         self.zz_addObservers(["frame", "bounds", "contentOffset"]) { [weak self] value in
             guard let `self` = self else { return }
             self.refreshFrame()
-            ZZLog(value.newValue)
+//            ZZLog(value.newValue)
         }
         
     }
