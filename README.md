@@ -5,9 +5,12 @@
 [![License](https://img.shields.io/cocoapods/l/ZZCustomControl.svg?style=flat)](https://cocoapods.org/pods/ZZCustomControl)
 [![Platform](https://img.shields.io/cocoapods/p/ZZCustomControl.svg?style=flat)](https://cocoapods.org/pods/ZZCustomControl)
 
+![Image text](https://github.com/CZ410/ZZCustomControl/blob/main/Images/data.png)
+
 基于[ZZBase](https://github.com/CZ410/ZZBase)开发的工具库（包含：ZZScrollView、ZZDrawerView、ZZUINavigationCtrl、ZZPageControl、ZZUIButton、UIScrollView+InsetView等 ）
 
 # ZZUICollectionViewSectionBgLayout
+
 实现UICollection Section背景功能（以一个分组为单位）
 
 ```
@@ -28,6 +31,7 @@
 ```
 
 # UIScrollView+InsetView
+
 在UIScrollView及其子类顶部添加一个Header，可设置顶部跟着手势拖动或固定于顶部。
 
 ```
@@ -184,9 +188,6 @@ ZZDrawerView由 topView + UIScrollView + bommtomView组成
 ```
 
 
-![Image text](https://github.com/CZ410/ZZCustomControl/blob/main/Images/data.png)
-
-
 ## Example
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
@@ -197,11 +198,24 @@ iOS11及以上版本
 
 ## Installation
 
+### CocoaPods
+
 ZZCustomControl is available through [CocoaPods](https://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
 ```ruby
 pod 'ZZCustomControl'
+```
+
+
+### Swift Package
+
+Add it to the dependencies value of your Package.swift:
+
+```
+dependencies: [
+    .package(url: "https://github.com/CZ410/ZZCustomControl.git", .upToNextMajor(from: "0.2.0"))
+]
 ```
 
 ## Author
