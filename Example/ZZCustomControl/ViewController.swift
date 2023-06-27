@@ -7,12 +7,15 @@
 //
 
 import UIKit
+import ZZCustomControl
 
 class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        let line = ZZScrollView.Item(line: .red)
     }
 
     override func didReceiveMemoryWarning() {

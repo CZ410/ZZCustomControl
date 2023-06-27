@@ -8,6 +8,6 @@ target 'ZZCustomControl_Example' do
   target 'ZZCustomControl_Tests' do
     inherit! :search_paths
 
-    pod 'FBSnapshotTestCase' , '~> 2.1.4'
+    #pod 'FBSnapshotTestCase' , '~> 2.1.4'
   end
 end

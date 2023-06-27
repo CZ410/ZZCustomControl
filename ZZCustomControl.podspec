@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'ZZCustomControl'
-  s.version          = '0.1.9'
+  s.version          = '0.2.0'
   s.summary          = '基于ZZBase开发的一些好用的组件.'
 
 # This description is used to generate tags and improve search results.
@@ -32,7 +32,7 @@ Pod::Spec.new do |s|
   s.platform     = :ios, "11.0"
   s.ios.deployment_target = '11.0'
 
-  s.source_files = 'ZZCustomControl/Classes/**/*'
+  s.source_files = 'Sources/**/*'
   
   # s.resource_bundles = {
   #   'ZZCustomControl' => ['ZZCustomControl/Assets/*.png']
@@ -41,5 +41,5 @@ Pod::Spec.new do |s|
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
   # s.dependency 'AFNetworking', '~> 2.3'
-  s.dependency 'ZZBase', '~> 0.1.1'
+  s.dependency 'ZZBase'
 end

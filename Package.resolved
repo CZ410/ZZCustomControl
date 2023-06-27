@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "zzbase",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CZ410/ZZBase.git",
+      "state" : {
+        "revision" : "84d40e9121a0d3374f225ac77a553028166a8638",
+        "version" : "0.2.0"
+      }
+    }
+  ],
+  "version" : 2
+}
