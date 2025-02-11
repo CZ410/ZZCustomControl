@@ -53,14 +53,25 @@ open class ZZTabControl: UIView{
     }
     
     open var selectedIndexBlock: ((_ index: Int) -> Void)?
+    
+    open func titleView(for index: Int) -> (view: UIView, normalSize: CGSize, seletedSize: CGSize)?{
+        return titleViewsArr.zz_objAt(index: index)
+    }
 
     /// 选中是指示器固定到ZZTabControl中间位置
     open var isScrollCenter: Bool = true
     
-    /// 标题
+    /// 标题 确保customViews 为空，优先customViews
     open var titles = [String](){
         didSet{
             refreshTitles()
+        }
+    }
+    
+    /// 自定义标题 设置之后 titles 失效.
+    open var customViews: [UIView] = []{
+        didSet{
+            refreshCustomTitles()
         }
     }
 
@@ -90,6 +101,7 @@ open class ZZTabControl: UIView{
     open var selectedScale: CGFloat = 1.5{
         didSet{
             refreshTitles()
+            refreshCustomTitles()
         }
     }
 
@@ -159,8 +171,25 @@ open class ZZTabControl: UIView{
             refreshSelectedIndex(animate: false)
         }
     }
-
+    
+    private func refreshCustomTitles(){
+        guard !self.customViews.isEmpty else { return }
+        titleViewsArr.forEach({ $0.view.superview != nil ? $0.view.removeFromSuperview() : nil })
+        titleViewsArr.removeAll()
+        
+        customViews.forEach { view in
+            view.sizeToFit()
+            let textSize = view.frame.size
+            let selectedSize = CGSize(width: (textSize.width * selectedScale) , height: textSize.height * selectedScale)
+            titleViewsArr.append((view, textSize, selectedSize))
+            contentView.addSubview(view)
+        }
+        refreshTitlesFrame()
+        refreshSelectedIndex(animate: false)
+    }
+    
     private func refreshTitles(){
+        guard self.customViews.isEmpty else { return }
         titleViewsArr.forEach({ $0.view.superview != nil ? $0.view.removeFromSuperview() : nil })
         titleViewsArr.removeAll()
         for i in 0 ..< titles.count {
