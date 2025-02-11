@@ -41,7 +41,6 @@ open class ZZTabControl: UIView{
         refreshSelectedIndex(animate: false)
     }
 
-    private var titleViewsArr = [(view: UIView, normalSize: CGSize, seletedSize: CGSize)]()
 
     /// 选中的位置
     open var seletedIndex: Int = 0
@@ -54,6 +53,7 @@ open class ZZTabControl: UIView{
     
     open var selectedIndexBlock: ((_ index: Int) -> Void)?
     
+    open private(set) var titleViewsArr = [(view: UIView, normalSize: CGSize, seletedSize: CGSize)]()
     open func titleView(for index: Int) -> (view: UIView, normalSize: CGSize, seletedSize: CGSize)?{
         return titleViewsArr.zz_objAt(index: index)
     }
@@ -194,7 +194,7 @@ open class ZZTabControl: UIView{
         titleViewsArr.removeAll()
         for i in 0 ..< titles.count {
             let title = titles[i]
-            let label = UILabel().zz_textAlignment(.center).zz_backgroundColor(.red)
+            let label = UILabel().zz_textAlignment(.center)
             label.text = title
             label.font = titleFont
 
