@@ -51,6 +51,8 @@ open class ZZTabControl: UIView{
         seletedIndex = index
         refreshSelectedIndex(animate: animate)
     }
+    
+    open var selectedIndexBlock: ((_ index: Int) -> Void)?
 
     /// 选中是指示器固定到ZZTabControl中间位置
     open var isScrollCenter: Bool = true
@@ -59,12 +61,6 @@ open class ZZTabControl: UIView{
     open var titles = [String](){
         didSet{
             refreshTitles()
-        }
-    }
-
-    open var customViews: [UIView] = []{
-        didSet{
-
         }
     }
 
@@ -177,6 +173,7 @@ open class ZZTabControl: UIView{
                 guard let `self` = self else { return }
                 if self.seletedIndex == i { return }
                 self.setSelectedIndex(i, animate: true)
+                self.selectedIndexBlock?(i)
             }
 
             let textSize = title.zz_textSize(font: titleFont, maxSize: CGSize(width: .zz_max, height: zz_height))

@@ -68,6 +68,12 @@ open class ZZFatherAlertViewCtrl: UIViewController {
         self.view.backgroundColor = UIColor.clear
         self.view.addSubview(self.effectBgView)
     }
+    
+    open override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        self.effectBgView.frame = self.view.bounds
+        self.view.sendSubviewToBack(self.effectBgView)
+    }
 
     open func present(frome superViewCtrl: UIViewController){
         if self.presentingViewController != nil { return }
