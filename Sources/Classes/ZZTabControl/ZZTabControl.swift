@@ -89,10 +89,29 @@ open class ZZTabControl: UIView{
         }
     }
 
-    open var normalTitleColor: UIColor = .black
-    open var selectedTitleColor: UIColor = .systemBlue
-    open var itemBackgroundColor: UIColor = .clear
-    open var itemSelectedBackgroundColor: UIColor = .clear
+    open var normalTitleColor: UIColor = .black{
+        didSet{
+            refreshTitles()
+        }
+    }
+    
+    open var selectedTitleColor: UIColor = .systemBlue{
+        didSet{
+            refreshTitles()
+        }
+    }
+    
+    open var itemBackgroundColor: UIColor = .clear{
+        didSet{
+            refreshTitles()
+        }
+    }
+    
+    open var itemSelectedBackgroundColor: UIColor = .clear{
+        didSet{
+            refreshTitles()
+        }
+    }
     
 
     open var titleFont: UIFont = .systemFont(ofSize: 14, weight: .regular){
