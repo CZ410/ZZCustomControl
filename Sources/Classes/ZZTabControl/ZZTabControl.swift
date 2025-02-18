@@ -91,6 +91,9 @@ open class ZZTabControl: UIView{
 
     open var normalTitleColor: UIColor = .black
     open var selectedTitleColor: UIColor = .systemBlue
+    open var itemBackgroundColor: UIColor = .clear
+    open var itemSelectedBackgroundColor: UIColor = .clear
+    
 
     open var titleFont: UIFont = .systemFont(ofSize: 14, weight: .regular){
         didSet{
@@ -197,6 +200,8 @@ open class ZZTabControl: UIView{
             let label = UILabel().zz_textAlignment(.center)
             label.text = title
             label.font = titleFont
+            label.textColor = normalTitleColor
+            label.backgroundColor = itemBackgroundColor
 
             label.zz_addTap { [weak self] sender in
                 guard let `self` = self else { return }
@@ -249,21 +254,25 @@ open class ZZTabControl: UIView{
 
     /// 恢复之前选中Item的样式
     private func refreshSelectedLastIndex(animate: Bool){
+        if titleViewsArr.isEmpty { return }
         let item = titleViewsArr[seletedIndex]
         let selLabel = item.view as? UILabel
         selLabel?.animateTextColor(to: normalTitleColor, animateTime: animateTime)
         if animate{
             UIView.animate(withDuration: animateTime)  {
                 item.view.transform = .identity
+                item.view.zz_backgroundColor(self.itemBackgroundColor)
             }
         }else {
             item.view.transform = .identity
+            item.view.zz_backgroundColor(self.itemBackgroundColor)
         }
     }
 
 
     /// 跟新选中Item的样式
     private func refreshSelectedIndex(animate: Bool){
+        if titleViewsArr.isEmpty { return }
         let item = titleViewsArr[seletedIndex]
         let selLabel = item.view as? UILabel
         selLabel?.animateTextColor(to: selectedTitleColor, animateTime: animateTime)
@@ -276,6 +285,7 @@ open class ZZTabControl: UIView{
         }
 
         func refresh(){
+            item.view.zz_backgroundColor(itemSelectedBackgroundColor)
             item.view.transform = CGAffineTransform(scaleX: self.selectedScale, y: self.selectedScale)
             self.refreshTitlesFrame()
             let indicatorWidth = self.scrollIndicatorFixedWidth == 0 ? item.view.zz_size.width : self.scrollIndicatorFixedWidth
