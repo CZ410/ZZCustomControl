@@ -59,8 +59,8 @@ public class ZZScrollView: UIScrollView {
         private(set) public var fixedWidth: CGFloat = 0 // 与inset 冲突  当大于0 时 inset left right 失效
         private(set) public var view: UIView!
         @objc public dynamic var inset: UIEdgeInsets = .zero
-        private(set) public dynamic var contentSize: CGSize = .zero
-        private(set) public dynamic var isHidden: Bool = false
+        @objc private(set) public dynamic var contentSize: CGSize = .zero
+        @objc private(set) public dynamic var isHidden: Bool = false
         
         private func addObserver(){
             if self.view is UIScrollView{
