@@ -75,19 +75,9 @@ import ZZBase
         _init()
     }
     
-    private var widthA: NSLayoutConstraint!
-    private var heightA: NSLayoutConstraint!
-
     private func _init(){
         self.backgroundColor = UIColor.clear
-        
-        self.translatesAutoresizingMaskIntoConstraints = false
-        widthA = self.widthAnchor.constraint(equalToConstant: 0)
-        heightA = self.heightAnchor.constraint(equalToConstant: 0)
-        widthA.isActive = true
-        heightA.isActive = true
-        widthA.priority = .defaultLow
-        heightA.priority = .defaultLow
+        self.contentMode = .redraw
     }
 
     open private(set) var defaultBackgroundColor : UIColor = UIColor.clear
@@ -479,18 +469,6 @@ import ZZBase
             self.titleLabel.text = self.highlightedTitle  ?? (self.isSelected ? (self.selectedTitle ?? self.defaultTitle) : self.defaultTitle)
             self.titleLabel.textColor = self.highlightedTitleColor ?? (self.isSelected ? (self.selectedTitleColor ?? self.defaultTitleColor) : self.defaultTitleColor)
         }
-//        self.backgroundView.image = (self.highlightedBackgroundImage ?? self.selectedBackgroundImage) ?? self.defaultBackgroundImage
-//        self.backgroundView.backgroundColor = (self.highlightedBackgroundColor ?? self.selectedBackgroundColor) ?? self.defaultBackgroundColor
-//        self.contentView.backgroundColor = (self.highlightedContentBgColor ?? self.selectedContentBgColor) ?? self.defaultContentBgColor
-//        self.contentView.image = (self.highlightedContentBackgroundImage ?? self.selectedContentBackgroundImage) ?? self.defaultContentBackgroundImage
-//        self.imageView.image = (self.highlightedImage ?? self.selectedImage) ?? self.defaultImage
-//        if self.highlightedAttributedString != nil || self.selectedAttributedString != nil || self.defaultAttributedString != nil {
-//            self.titleLabel.attributedText = (self.highlightedAttributedString ?? self.selectedAttributedString) ?? self.defaultAttributedString
-//        }else{
-//            self.titleLabel.text = (self.highlightedTitle ?? self.selectedTitle) ?? self.defaultTitle
-//            self.titleLabel.textColor = UIColor.changeAlpha(color: (self.highlightedTitleColor ?? self.selectedTitleColor) ?? self.defaultTitleColor,
-//                                                            alpha: 0.8)
-//        }
         self.contentView.alpha = 0.8
     }
     override open func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -594,25 +572,6 @@ import ZZBase
     private var isShowPaopaoLabel: Bool = false
     
     //MARK: - views
-    open lazy var paopaoLabel: PaopaoView = {
-        let view = PaopaoView.init(bindingView: self.contentView, addView: self)
-        view.backgroundColor = UIColor.red
-        view.textColor = UIColor.white
-        view.font = UIFont.systemFont(ofSize: 12)
-        view.zz_cornerRadius = 7.5
-        view.moreSize = CGSize.init(width: 6, height: 0)
-        view.minSize = CGSize.init(width: 15, height: 15)
-        self.isShowPaopaoLabel = true
-        return view
-    }()
-    
-    /// paopaoLabel
-    @discardableResult
-    open func paopaoLabel(_ block: (_ view: PaopaoView) -> Void) -> Self{
-        block(self.paopaoLabel)
-        return self
-    }
-    
     open lazy var titleLabel : ZZUILabel = {
         let label = ZZUILabel.init()
         label.changeType = .All
@@ -674,7 +633,6 @@ import ZZBase
     open func flushAll() {
         self.flushContentStyle()
         self.flushContentAlignment()
-        self.refreshPaopaoView()
     }
     
     /// 计算在不同状态下 文字最大计算宽度
@@ -792,13 +750,10 @@ import ZZBase
             }
         }
         self.contentView.zz_size = CGSize.init(width: maxWidth, height: maxHeight)
-        
-        widthA.constant = maxWidth
-        heightA.constant = maxHeight
-        
-        var constraints = self.constraints
-        constraints.removeAll(where: {$0 == widthA || $0 == heightA})
-        self.translatesAutoresizingMaskIntoConstraints = constraints.count == 0
+    }
+    
+    open override var intrinsicContentSize: CGSize{
+        return self.contentView.zz_size
     }
     
     /// 刷新content对其方式
@@ -827,24 +782,5 @@ import ZZBase
         }
         self.contentView.zz_x  = self.contentView.zz_x + self.contentOffset.zz_x
         self.contentView.zz_y  = self.contentView.zz_y + self.contentOffset.zz_y
-    }
-
-    open func refreshPaopaoView() -> Void {
-        guard isShowPaopaoLabel else { return }
-        if let view = self.paopaoBindView?(self){
-            if self.zz_isHave(view: view){
-                self.paopaoLabel.bindingView = view
-                self.paopaoLabel.refreshFrame()
-                return
-            }
-        }
-        if imageAlignment.contains(.Top){
-            self.paopaoLabel.bindingView = self.imageView
-        }else if(imageAlignment.contains(.Bottom)){
-            self.paopaoLabel.bindingView = self.titleLabel
-        }else{
-            self.paopaoLabel.bindingView = self.contentView
-        }
-        self.paopaoLabel.refreshFrame()
     }
 }

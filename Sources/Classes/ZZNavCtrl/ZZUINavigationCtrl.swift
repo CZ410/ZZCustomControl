@@ -19,7 +19,7 @@ public class ZZUINavigationCtrl: UINavigationController {
         self.popViewController(animated: true)
     }
     
-    fileprivate var backButton: ZZUIButton{
+    fileprivate var backButton: ZZUIButton {
         let button = ZZUIButton()
         button.set(image: ZZUINavigationCtrl.backImage, state: .normal)
             .contentAlignment(.LeftCenter)
@@ -46,7 +46,7 @@ public class ZZUINavigationCtrl: UINavigationController {
             self?.pushViewController(viewCtrl, animated: animat)
         }
         pushNavCtrl.popViewCtrlBlock = {[weak self] animat in
-            return (self?.popViewController(animated: animat))!
+            return (self?.popViewController(animated: animat))
         }
         pushNavCtrl.popToRootViewCtrlBlock = {[weak self] animat in
             if #available(iOS 14, *) {
@@ -83,6 +83,10 @@ public class ZZUINavigationCtrl: UINavigationController {
             }
             if willPushCtrl == nil { return nil }
             return self?.popToViewController(willPushCtrl!, animated: animat)
+        }
+        
+        pushNavCtrl.pushClearLastViewCtrlBlock = { [weak self] vc, count, animation in
+            self?.pushViewController(vc, clearLast: count, animated: animation)
         }
     }
 

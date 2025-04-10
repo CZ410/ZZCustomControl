@@ -16,6 +16,14 @@ open class ZZFatherViewCtrl: UIViewController {
         super.viewDidLoad()
         
         self.view.backgroundColor = ZZFatherViewCtrl.backgroundColor
+        
+        self.zz_navBarBgImg(Self.navigationBarBgImage)
+            .zz_navBarBgColor(Self.navigationBarBgColor)
+            .zz_navBarBgEffect(Self.navigationBarBgEffect)
+            .zz_shadowImag(Self.shadowImage)
+            .zz_titleColor(Self.titleColor)
+            .zz_titleFont(Self.titleFont)
+        
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(applicationWillResignActive(notificaton:)),
                                                name: UIApplication.willResignActiveNotification,
@@ -25,6 +33,7 @@ open class ZZFatherViewCtrl: UIViewController {
                                                selector: #selector(applicationBecomeActive(notificaton:)),
                                                name: UIApplication.didBecomeActiveNotification,
                                                object: nil)
+
         createView()
     }
     
@@ -34,12 +43,8 @@ open class ZZFatherViewCtrl: UIViewController {
     
     override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        refreshNavigation()
-        refreshTitleColor()
-        refreshShowImage()
-
     }
+    
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
     }
@@ -55,56 +60,13 @@ open class ZZFatherViewCtrl: UIViewController {
      */
 
     public static var navigationBarBgImage : UIImage? = .zz_image(color: .white)
+    public static var navigationBarBgColor : UIColor?
+    public static var navigationBarBgEffect: UIBlurEffect?
     public static var shadowImage: UIImage? = UIImage()
     public static var titleColor: UIColor? = UIColor.black
     public static var titleFont: UIFont = UIFont.systemFont(ofSize: 19, weight: .medium)
-    public static var backgroundColor: UIColor = .black.zz_transition(to: .white, progress: 0.2)
-    
-//    public static var statusBarStyle: UIStatusBarStyle = .default
-//    public static var shouldAutorotate: Bool = false
-//    public static var supportedInterfaceOrientations: UIInterfaceOrientationMask = .portrait
-//    public static var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation = .portrait
-//
-//    open override var shouldAutorotate: Bool{
-//        return ZZFatherViewCtrl.shouldAutorotate
-//    }
-//
-//    open override var supportedInterfaceOrientations: UIInterfaceOrientationMask{
-//        return ZZFatherViewCtrl.supportedInterfaceOrientations
-//    }
-//
-//    open override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation{
-//        return ZZFatherViewCtrl.preferredInterfaceOrientationForPresentation
-//    }
-//
-//    open override var preferredStatusBarStyle: UIStatusBarStyle{
-//        return ZZFatherViewCtrl.statusBarStyle
-//    }
-
-
-    //MARK: - set get
-    open var navigationBarBgImage : UIImage? =  ZZFatherViewCtrl.navigationBarBgImage {
-        didSet{
-            self.refreshNavigation()
-        }
-    }
-    open var shadowImage: UIImage? = ZZFatherViewCtrl.shadowImage {
-        didSet{
-            self.refreshShowImage()
-        }
-    }
-    
-    open var titleColor: UIColor? = ZZFatherViewCtrl.titleColor {
-        didSet{
-            self.refreshTitleColor()
-        }
-    }
-
-    open var titleFont: UIFont = ZZFatherViewCtrl.titleFont {
-        didSet{
-            self.refreshTitleColor()
-        }
-    }
+    public static var backgroundColor: UIColor = .white
+   
 
     open lazy var rightButton: ZZUIButton = {
         let button = ZZUIButton()
@@ -143,20 +105,6 @@ open class ZZFatherViewCtrl: UIViewController {
     @objc
     open func applicationBecomeActive(notificaton:Notification) -> Void {
 //        ZZLog("应用重新回到活跃状态")
-    }
-
-    
-    open func refreshNavigation() -> Void {
-        self.zz_navBarBgImg = self.navigationBarBgImage
-    }
-
-    open func refreshTitleColor() -> Void {
-        self.zz_titleColor = self.titleColor
-        self.zz_titleFont = self.titleFont
-    }
-    
-    open func refreshShowImage() -> Void {
-        self.zz_shadowImag = self.shadowImage
     }
     
     open func createView() -> Void {

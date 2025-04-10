@@ -15,8 +15,13 @@ public class ZZUINavigationPushCtrl: UINavigationController {
     /// PUSH 回调
     public var pushViewCtrlBlock : pushViewCtrl?
     
+    /// PUSH
+    public typealias pushClearLastViewCtrl = (_ viewCtrl:UIViewController, _ count: Int, _ animation:Bool) -> ()
+    /// PUSH 回调
+    public var pushClearLastViewCtrlBlock : pushClearLastViewCtrl?
+    
     /// POP
-    public typealias popViewCtrl = (_ animation:Bool) -> UIViewController
+    public typealias popViewCtrl = (_ animation:Bool) -> UIViewController?
     /// POP 回调
     public var popViewCtrlBlock : popViewCtrl?
     
@@ -92,6 +97,15 @@ public class ZZUINavigationPushCtrl: UINavigationController {
             return super.popToClass(vcClass: vcClass, animated: animated)
         }
     }
+    
+    public override func pushViewController(_ viewController: UIViewController, clearLast count: Int, animated: Bool) {
+        if (self.pushClearLastViewCtrlBlock != nil) {
+            return self.pushClearLastViewCtrlBlock!(viewController, count, animated)
+        }else{
+            return super.pushViewController(viewController, clearLast: count, animated: animated)
+        }
+    }
+    
 }
 
 public extension UINavigationController{
@@ -110,4 +124,15 @@ public extension UINavigationController{
         }
         return self.popToViewController(willPushCtrl!, animated: animated)
     }
+    
+    @objc
+    func pushViewController(_ viewController: UIViewController, clearLast count: Int, animated: Bool) {
+        var count = count
+        while self.viewControllers.count > 1 && count > 0 {
+            count -= 1
+            self.viewControllers.removeLast()
+        }
+        self.pushViewController(viewController, animated: animated)
+    }
+    
 }
