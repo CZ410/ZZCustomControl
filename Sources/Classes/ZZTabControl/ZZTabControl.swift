@@ -52,6 +52,7 @@ open class ZZTabControl: UIView{
     }
     
     open var selectedIndexBlock: ((_ index: Int) -> Void)?
+    open var clickedIndexBlock: ((_ index: Int) -> Void)?
     
     open private(set) var titleViewsArr = [(view: UIView, normalSize: CGSize, seletedSize: CGSize)]()
     open func titleView(for index: Int) -> (view: UIView, normalSize: CGSize, seletedSize: CGSize)?{
@@ -224,6 +225,7 @@ open class ZZTabControl: UIView{
 
             label.zz_addTap { [weak self] sender in
                 guard let `self` = self else { return }
+                self.clickedIndexBlock?(i)
                 if self.seletedIndex == i { return }
                 self.setSelectedIndex(i, animate: true)
                 self.selectedIndexBlock?(i)
