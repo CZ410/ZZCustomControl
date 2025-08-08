@@ -4,7 +4,7 @@ platform :ios, '13.0'
 
 target 'ZZCustomControl_Example' do
   pod 'ZZCustomControl', :path => '../ZZCustomControl.podspec'
-
+  pod 'ZZBase', '~> 1.1.0'
   target 'ZZCustomControl_Tests' do
     inherit! :search_paths
 

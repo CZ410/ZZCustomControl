@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		06B944042E3C4FA30081B38D /* EmptyViewTestViewCtrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B944032E3C4F930081B38D /* EmptyViewTestViewCtrl.swift */; };
 		06EB03712DA7B22700770E69 /* TestPushViewCtrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EB03702DA7B22100770E69 /* TestPushViewCtrl.swift */; };
 		5726C97136B557543F05D3B1 /* Pods_ZZCustomControl_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E3C892B9577A0E44B04440A /* Pods_ZZCustomControl_Tests.framework */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
@@ -29,6 +30,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		06B944032E3C4F930081B38D /* EmptyViewTestViewCtrl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyViewTestViewCtrl.swift; sourceTree = "<group>"; };
 		06EB03702DA7B22100770E69 /* TestPushViewCtrl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestPushViewCtrl.swift; sourceTree = "<group>"; };
 		08529E78E86B443F1460D969 /* ZZCustomControl.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = ZZCustomControl.podspec; path = ../ZZCustomControl.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		10BEB2BD489290D4163F886B /* Pods-ZZCustomControl_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZZCustomControl_Tests.debug.xcconfig"; path = "Target Support Files/Pods-ZZCustomControl_Tests/Pods-ZZCustomControl_Tests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -107,6 +109,7 @@
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
 				06EB03702DA7B22100770E69 /* TestPushViewCtrl.swift */,
+				06B944032E3C4F930081B38D /* EmptyViewTestViewCtrl.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
@@ -297,9 +300,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-ZZCustomControl_Example/Pods-ZZCustomControl_Example-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-ZZCustomControl_Example/Pods-ZZCustomControl_Example-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -335,6 +342,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				06B944042E3C4FA30081B38D /* EmptyViewTestViewCtrl.swift in Sources */,
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 				06EB03712DA7B22700770E69 /* TestPushViewCtrl.swift in Sources */,

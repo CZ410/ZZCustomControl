@@ -9,6 +9,24 @@
 import UIKit
 import ZZBase
 
+public extension String{
+    func zz_toZZUIButton(for state: ZZUIButton.ZZState = .normal) -> ZZUIButton{
+        return ZZUIButton().set(title: self, state: state)
+    }
+}
+
+public extension NSAttributedString{
+    func zz_toZZUIButton(for state: ZZUIButton.ZZState = .normal) -> ZZUIButton{
+        return ZZUIButton().set(attString: self, state: state)
+    }
+}
+
+public extension UIImage{
+    func zz_toZZUIButton(for state: ZZUIButton.ZZState = .normal) -> ZZUIButton{
+        return ZZUIButton().set(image: self, state: state)
+    }
+}
+
 @objcMembers @IBDesignable open class ZZUIButton: UIControl {
     public struct ZZState : OptionSet {
         public var rawValue: Int
@@ -555,6 +573,20 @@ import ZZBase
         return self
     }
     
+    /// titleLabel 的最大宽度。设置之后Label 内容将按照设置值计算，不再使用默认计算方式
+    open var titleLabelPreferredMaxLayoutWidth: CGFloat?{
+        didSet{
+            self.flushAll()
+        }
+    }
+    
+    /// titleLabel 的最大宽度。设置之后Label 内容将按照设置值计算，不再使用默认计算方式
+    @discardableResult
+    open func titleLabelPreferredMaxLayoutWidth(_ width: CGFloat?) -> Self{
+        self.titleLabelPreferredMaxLayoutWidth = width
+        return self
+    }
+    
     open lazy var backgroundView : UIImageView = {
         let view = UIImageView.init()
         view.isUserInteractionEnabled = false
@@ -625,7 +657,7 @@ import ZZBase
         super.layoutSubviews()
         self.backgroundView.frame = self.bounds
         self.sendSubviewToBack(self.backgroundView)
-        self.titleLabel.willChangedMaxWidth = self.willChangeMaxWidth()
+        self.titleLabel.willChangedMaxWidth = titleLabelPreferredMaxLayoutWidth ?? self.willChangeMaxWidth()
         self.titleLabel.refreshFrame()
         self.flushAll()
     }
@@ -640,15 +672,17 @@ import ZZBase
         var textMaxWidth: CGFloat = self.zz_width
         if imageAlignment.contains(.Left) || imageAlignment.contains(.Right){
             textMaxWidth = (self.zz_width - self.willChangeSpace() - self.imageView.zz_width - abs(self.contentOffset.x))
+        } else{
+            textMaxWidth = (self.zz_width - abs(self.contentOffset.x))
         }
         if textMaxWidth < self.contentMinSize.width && self.contentMinSize != .zero{
             textMaxWidth = self.contentMinSize.width
         }
         textMaxWidth -= (self.contentMoreSize.width)
 
-        if (textMaxWidth + self.contentInset.left + self.contentInset.right) >= self.zz_width {
-            textMaxWidth -= (self.contentInset.left + self.contentInset.right)
-        }
+//        if (textMaxWidth + self.contentInset.left + self.contentInset.right) >= self.zz_width {
+            textMaxWidth -= -(self.contentInset.left + self.contentInset.right)
+//        }
         return textMaxWidth
     }
     
@@ -690,14 +724,16 @@ import ZZBase
             }
         }
 
-        if (maxWidth + self.contentInset.left + self.contentInset.right) >= self.zz_width {
-            maxWidth -= (self.contentInset.left + self.contentInset.right)
-        }
-
-        if (maxHeight + self.contentInset.top + self.contentInset.bottom) >= self.zz_height{
-            maxHeight -= (self.contentInset.top + self.contentInset.bottom)
-        }
-        
+//        if (maxWidth + self.contentInset.left + self.contentInset.right) >= self.zz_width {
+////            maxWidth -= (self.contentInset.left + self.contentInset.right)
+//            maxWidth = self.zz_width - (self.contentInset.left + self.contentInset.right + self.contentOffset.zz_x)
+//        }
+//
+//        if (maxHeight + self.contentInset.top + self.contentInset.bottom) >= self.zz_height{
+////            maxHeight -= (self.contentInset.top + self.contentInset.bottom)
+//            maxHeight = self.zz_height - (self.contentInset.top + self.contentInset.bottom + self.contentOffset.zz_y)
+//        }
+//        
         if imageAlignment.contains(.Center){
             self.imageView.center = CGPoint.init(x: maxWidth / 2.0, y: maxHeight / 2.0)
             self.titleLabel.center = CGPoint.init(x: maxWidth / 2.0, y: maxHeight / 2.0)
@@ -753,13 +789,16 @@ import ZZBase
     }
     
     open override var intrinsicContentSize: CGSize{
-        return self.contentView.zz_size
+        var size = self.contentView.zz_size
+        size = size + CGSize(width: -(contentInset.left + contentInset.right), height: -(contentInset.top + contentInset.bottom))
+        size = size + CGSize(width: contentOffset.zz_x, height: contentOffset.zz_y )
+        return size
     }
     
     /// 刷新content对其方式
     open func flushContentAlignment() -> Void {
         if contentAlignment.contains(.Center) {
-            self.contentView.zz_center = CGPoint.init(x: self.zz_width / 2.0, y: self.zz_height / 2.0)
+            self.contentView.zz_center = CGPoint.init(x: (self.zz_width - self.contentOffset.zz_x) / 2.0, y: (self.zz_height - self.contentOffset.zz_y) / 2.0)
         }
         if contentAlignment.contains(.Left) {
             self.contentView.zz_x = self.contentInset.left
@@ -777,10 +816,10 @@ import ZZBase
     }
     
     open func flushContentOffSet() -> Void {
-        if self.contentOffset == CGPoint.zero {
-            return
+        if self.contentOffset != CGPoint.zero {
+            self.contentView.zz_x  = self.contentView.zz_x + self.contentOffset.zz_x
+            self.contentView.zz_y  = self.contentView.zz_y + self.contentOffset.zz_y
         }
-        self.contentView.zz_x  = self.contentView.zz_x + self.contentOffset.zz_x
-        self.contentView.zz_y  = self.contentView.zz_y + self.contentOffset.zz_y
+        invalidateIntrinsicContentSize()
     }
 }

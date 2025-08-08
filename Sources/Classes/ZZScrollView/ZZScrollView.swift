@@ -10,6 +10,14 @@ import UIKit
 import WebKit
 import ZZBase
 
+// MARK: - ZZScrollView扩展
+
+public extension UIView{
+    func zz_toZZScrollItem(inset: UIEdgeInsets = .zero, minHeight: CGFloat = 0, fixedWidth: CGFloat = 0, maxHeight: CGFloat = 0) -> ZZScrollView.Item{
+        return ZZScrollView.Item(view: self, inset: inset, minHeight: minHeight, fixedWidth: fixedWidth, maxHeight: maxHeight)
+    }
+}
+
 public class ZZScrollView: UIScrollView {
     public class ZZScrollItem: Item{ }
     
@@ -61,6 +69,15 @@ public class ZZScrollView: UIScrollView {
         @objc public dynamic var inset: UIEdgeInsets = .zero
         @objc private(set) public dynamic var contentSize: CGSize = .zero
         @objc private(set) public dynamic var isHidden: Bool = false
+        
+        public var hidden: Bool{
+            get{
+                return self.view.isHidden
+            }
+            set{
+                self.view.isHidden = newValue
+            }
+        }
         
         private func addObserver(){
             if self.view is UIScrollView{
