@@ -14,7 +14,7 @@ public class ZZUILabel: UILabel {
     public struct ChangeFrameWithSetText : OptionSet {
         public var rawValue: UInt
 
-        public init(rawValue: ZZUILabel.ChangeFrameWithSetText.RawValue) {
+        public init(rawValue: UInt) {
             self.rawValue = rawValue
         }
 
