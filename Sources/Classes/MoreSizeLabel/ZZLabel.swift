@@ -1,5 +1,6 @@
 
 import Foundation
+import UIKit
 import ZZBase
 
 open class ZZLabel: UILabel{

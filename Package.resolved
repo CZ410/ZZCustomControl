@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CZ410/ZZBase.git",
       "state" : {
-        "revision" : "8403c83d0d9026fabe9e1e9ab182d649762401ba",
-        "version" : "1.1.0"
+        "revision" : "0bfedfd9e3bc358d5d2d5e1a9b1f9914e0898073",
+        "version" : "1.1.1"
       }
     }
   ],
