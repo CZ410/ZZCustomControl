@@ -7,6 +7,7 @@
 
 import Foundation
 import ZZBase
+import UIKit
 
 public extension ZZTabControl{
     enum ContentAlignment {

@@ -86,7 +86,15 @@ public class ZZEmptyView: UIView {
         ]
     }
 
-    public lazy var loadingView = UIActivityIndicatorView(style: .medium)
+    lazy var loadingView: UIActivityIndicatorView = {
+        if #available(iOS 13.0, *) {
+            let loadingView = UIActivityIndicatorView(style: .medium)
+            return loadingView
+        } else {
+            let loadingView = UIActivityIndicatorView(style: .white)
+            return loadingView
+        }
+    }()
 
     public lazy var contenView = UIStackView.zz_v([loadingView, imageView, titleLab, reloadBtn], alignment: .center, distribution: .equalSpacing, spacing: 15)
 
