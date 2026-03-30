@@ -239,7 +239,6 @@ open class ZZDrawerView: UIView {
     }
 
     private func _init() {
-        zz_backgroundColor(.white)
         guard let superView = superView else { return }
 
         layer.masksToBounds = true
@@ -370,7 +369,7 @@ open class ZZDrawerView: UIView {
                 if self.showingHeight <= self.middleHeight {
                     self.bgView.zz_backgroundColor(.clear)
                 } else {
-                    self.bgView.zz_backgroundColor(.init(white: 0, alpha: 0.5))
+                    bgView.zz_backgroundColor(.black.zz_alpha(0.5))
                 }
 
                 if let t = self.topView {
@@ -404,7 +403,7 @@ open class ZZDrawerView: UIView {
             if showingHeight <= middleHeight {
                 bgView.zz_backgroundColor(.clear)
             } else {
-                bgView.zz_backgroundColor(.init(white: 0, alpha: 0.5))
+                bgView.zz_backgroundColor(.black.zz_alpha(0.5))
             }
             callStateChangedDelegate()
         }
@@ -431,7 +430,7 @@ open class ZZDrawerView: UIView {
         var alpha = (height - middleHeight) / (maxHeight - middleHeight)
         if alpha < 0 { alpha = 0 }
         if alpha > 1 { alpha = 1 }
-        bgView.zz_backgroundColor(.init(white: 0, alpha: alpha * 0.5))
+        bgView.zz_backgroundColor(.black.zz_alpha(0.5))
 
         if let sc = scrollView, height < maxHeight {
             sc.contentOffset = CGPointMake(0, -sc.contentInset.top)
