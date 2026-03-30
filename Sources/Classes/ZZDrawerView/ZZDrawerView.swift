@@ -430,7 +430,7 @@ open class ZZDrawerView: UIView {
         var alpha = (height - middleHeight) / (maxHeight - middleHeight)
         if alpha < 0 { alpha = 0 }
         if alpha > 1 { alpha = 1 }
-        bgView.zz_backgroundColor(.black.zz_alpha(0.5))
+        bgView.zz_backgroundColor(.black.zz_alpha(alpha))
 
         if let sc = scrollView, height < maxHeight {
             sc.contentOffset = CGPointMake(0, -sc.contentInset.top)
