@@ -109,8 +109,16 @@ open class ZZDrawerView: UIView {
         }
     }
 
-    @discardableResult open func scrollView(_ v: UIView?) -> Self {
-        bottomView = v
+    @discardableResult open func scrollView(_ v: UIScrollView?) -> Self {
+        scrollView = v
+        return self
+    }
+
+    /// 动画时长
+    var animationDuration: TimeInterval = 0.25
+
+    @discardableResult open func animationDuration(_ v: TimeInterval) -> Self {
+        animationDuration = v
         return self
     }
 
@@ -430,7 +438,8 @@ open class ZZDrawerView: UIView {
         var alpha = (height - middleHeight) / (maxHeight - middleHeight)
         if alpha < 0 { alpha = 0 }
         if alpha > 1 { alpha = 1 }
-        bgView.zz_backgroundColor(.black.zz_alpha(alpha))
+        if alpha.isNaN { alpha = 0 }
+        self.bgView.zz_backgroundColor(.black.zz_alpha(alpha))
 
         if let sc = scrollView, height < maxHeight {
             sc.contentOffset = CGPointMake(0, -sc.contentInset.top)
