@@ -115,6 +115,11 @@ open class ZZTabControl: UIView{
         }
     }
     
+    open var itemRadius: CGFloat = 0{
+        didSet {
+            refreshTitles()
+        }
+    }
 
     open var titleFont: UIFont = .systemFont(ofSize: 14, weight: .regular){
         didSet{
@@ -223,6 +228,8 @@ open class ZZTabControl: UIView{
             label.font = titleFont
             label.textColor = normalTitleColor
             label.backgroundColor = itemBackgroundColor
+            label.layer.cornerRadius = itemRadius
+            label.layer.masksToBounds = true
 
             label.zz_addTap { [weak self] sender in
                 guard let `self` = self else { return }
@@ -316,7 +323,7 @@ open class ZZTabControl: UIView{
             self.scrollIndicator.zz_size(size)
             switch self.scrollIndicatorAlignment {
                 case .top:
-                    self.scrollIndicator.zz_center(CGPoint(x: item.view.zz_centerX + scrollIndicatorOffset.x, 
+                    self.scrollIndicator.zz_center(CGPoint(x: item.view.zz_centerX + scrollIndicatorOffset.x,
                                                            y: size.height * 0.5 + inset.top + scrollIndicatorOffset.y))
                 case .center:
                     self.scrollIndicator.zz_center(CGPoint(x: item.view.zz_centerX + scrollIndicatorOffset.x,
