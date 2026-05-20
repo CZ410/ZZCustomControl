@@ -183,7 +183,7 @@ public extension UIView {
 
     @discardableResult
     func zz_emptyStyle(_ style: ZZEmptyView.Style, config: ZZEmptyView.StyleConfig? = nil, verticalOffset: CGFloat = 0, block: EmptyBlock? = nil) -> Self {
-        if style == emptyView?.style {
+        if style == emptyView?.style && emptyView?.superview != nil && emptyView?.isHidden == false {
             return self
         }
         self.verticalOffset = verticalOffset
