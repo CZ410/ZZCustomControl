@@ -126,6 +126,25 @@ extension ZZUINavigationCtrl : UIGestureRecognizerDelegate{
         }
         return true;
     }
+    
+    // 处理pop和scrollview侧滑冲突问题
+    public func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
+        guard gestureRecognizer == self.interactivePopGestureRecognizer else { return false }
+        guard self.currentShowVc == self.topViewController else { return false }
+        guard self.viewControllers.count > 1 else { return false }
+        guard let scrollView = otherGestureRecognizer.view as? UIScrollView else { return false }
+        guard scrollView.panGestureRecognizer == otherGestureRecognizer else { return false }
+
+        // Allow edge-pop together with horizontal scroll only when the content is
+        // already at the left boundary and the user is swiping right.
+        let isAtLeftEdge = scrollView.contentOffset.x <= -scrollView.adjustedContentInset.left
+        let translationX = scrollView.panGestureRecognizer.translation(in: scrollView).x
+        let isSwipingRight = translationX > 0
+        return isAtLeftEdge && isSwipingRight
+    }
 }
 
 //public extension UINavigationController{
