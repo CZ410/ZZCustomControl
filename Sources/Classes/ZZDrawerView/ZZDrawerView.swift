@@ -115,7 +115,7 @@ open class ZZDrawerView: UIView {
     }
 
     /// 动画时长
-    var animationDuration: TimeInterval = 0.25
+    open var animationDuration: TimeInterval = 0.25
 
     @discardableResult open func animationDuration(_ v: TimeInterval) -> Self {
         animationDuration = v
@@ -364,7 +364,7 @@ open class ZZDrawerView: UIView {
         showingHeight = height
         if animation {
             callStateWillChangeDelegate()
-            UIView.animate(withDuration: 0.25, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: .curveEaseInOut) { [weak self] in
+            UIView.animate(withDuration: animationDuration, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseInOut) { [weak self] in
                 guard let `self` = self else { return }
                 var selfFrame = self.frame
                 selfFrame.zz_y(superView.zz_height - self.showingHeight)
