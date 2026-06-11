@@ -12,17 +12,26 @@ import ZZBase
 
 // MARK: - ZZScrollView扩展
 
-public extension UIView{
-    func zz_toZZScrollItem(inset: UIEdgeInsets = .zero, minHeight: CGFloat = 0, fixedWidth: CGFloat = 0, maxHeight: CGFloat = 0) -> ZZScrollView.Item{
+public extension UIView {
+    func zz_toZZScrollItem(inset: UIEdgeInsets = .zero, minHeight: CGFloat = 0, fixedWidth: CGFloat = 0, maxHeight: CGFloat = 0) -> ZZScrollView.Item {
         return ZZScrollView.Item(view: self, inset: inset, minHeight: minHeight, fixedWidth: fixedWidth, maxHeight: maxHeight)
     }
 }
 
 public class ZZScrollView: UIScrollView {
-    public class ZZScrollItem: Item{ }
-    
+
+    private static let itemObserverKey = "zzScrollView"
+    private static let itemObserverKeyPaths = ["contentSize", "inset", "isHidden"]
+    private static let contentOffsetObserverKey = "zzScrollView"
+
+    private var isRefreshOffsetPending = false
+
+    public class ZZScrollItem: Item { }
+
     public class Item: NSObject {
-        
+
+        private static let viewObserverKey = "zzScrollViewItem"
+
         /// 初始化一个ZZScrollView.Item
         /// - Parameters:
         ///   - view: 内容View
@@ -38,14 +47,14 @@ public class ZZScrollView: UIScrollView {
             self.maxHeight = maxHeight
             self.addObserver()
         }
-        
+
         /// 创建一条分割线
         /// - Parameters:
         ///   - color: 颜色
         ///   - inset: insets
         ///   - height: 高度
         ///   - fixedWidth: 如果需要固定宽度  传大于0
-        public init(line color: UIColor = UIColor.lightGray, inset: UIEdgeInsets = .zero, height: CGFloat = 6, fixedWidth: CGFloat = 0, maxHeight: CGFloat = 0){
+        public init(line color: UIColor = UIColor.lightGray, inset: UIEdgeInsets = .zero, height: CGFloat = 6, fixedWidth: CGFloat = 0, maxHeight: CGFloat = 0) {
             super.init()
             let view = UIView()
             view.backgroundColor = color
@@ -56,197 +65,214 @@ public class ZZScrollView: UIScrollView {
             self.maxHeight = maxHeight
             self.addObserver()
         }
-        
+
         deinit {
-            self.removeObserver()
-            self.view.zz_remoAllObservers()
+            view?.zz_remoAllObservers()
         }
-        
+
         private(set) public var minHeight: CGFloat = 0
-        private(set) public var maxHeight: CGFloat = 0 // 当view 不为 uiscorollview及其子类时生效
-        private(set) public var fixedWidth: CGFloat = 0 // 与inset 冲突  当大于0 时 inset left right 失效
+        private(set) public var maxHeight: CGFloat = 0
+        private(set) public var fixedWidth: CGFloat = 0
         private(set) public var view: UIView!
         @objc public dynamic var inset: UIEdgeInsets = .zero
         @objc private(set) public dynamic var contentSize: CGSize = .zero
         @objc private(set) public dynamic var isHidden: Bool = false
-        
-        public var hidden: Bool{
-            get{
-                return self.view.isHidden
+
+        public var hidden: Bool {
+            get {
+                return view.isHidden
             }
-            set{
-                self.view.isHidden = newValue
+            set {
+                view.isHidden = newValue
             }
         }
-        
-        private func addObserver(){
-            if self.view is UIScrollView{
-                let scView = self.view as! UIScrollView
+
+        private func addObserver() {
+            if view is UIScrollView {
+                let scView = view as! UIScrollView
                 scView.isScrollEnabled = false
-                scView.zz_addObserver("contentSize", block: { [weak self] _ in
-                    guard let `self` = self else { return }
+                scView.zz_addObserver("contentSize", key: Item.viewObserverKey, block: { [weak self] _ in
+                    guard let self = self else { return }
                     var size = scView.contentSize
                     if size.height < self.minHeight, self.minHeight > 0 { size.height = self.minHeight }
-                    self.contentSize = size
+                    if self.contentSize != size { self.contentSize = size }
                 })
                 var size = scView.contentSize
                 if size.height < self.minHeight { size.height = self.minHeight }
-                self.contentSize = size
-            }else if self.view is WKWebView{
-                let webView = self.view as! WKWebView
+                contentSize = size
+            } else if view is WKWebView {
+                let webView = view as! WKWebView
                 webView.scrollView.isScrollEnabled = false
-                webView.zz_addObserver("scrollView.contentSize", block: {[weak self] _ in
-                    guard let `self` = self else { return }
+                webView.zz_addObserver("scrollView.contentSize", key: Item.viewObserverKey, block: { [weak self] _ in
+                    guard let self = self else { return }
                     var size = webView.scrollView.contentSize
                     if size.height < self.minHeight, self.minHeight > 0 { size.height = self.minHeight }
-                    self.contentSize = size
+                    if self.contentSize != size { self.contentSize = size }
                 })
                 var size = webView.scrollView.contentSize
                 if size.height < self.minHeight, self.minHeight > 0 { size.height = self.minHeight }
-                self.contentSize = size
-            }else{
-                self.view.zz_addObserver("frame", block: {[weak self] _ in
-                    guard let `self` = self else { return }
-                    if self.view.zz_size != self.contentSize{
+                contentSize = size
+            } else {
+                view.zz_addObserver("frame", key: Item.viewObserverKey, block: { [weak self] _ in
+                    guard let self = self else { return }
+                    if self.view.zz_size != self.contentSize {
                         var size = self.view.zz_size
                         if size.height > self.maxHeight, self.maxHeight > 0 { size.height = self.maxHeight }
                         self.contentSize = size
                     }
                 })
-                var size = self.view.zz_size
+                var size = view.zz_size
                 if size.height > self.maxHeight, self.maxHeight > 0 { size.height = self.maxHeight }
-                self.contentSize = size
+                contentSize = size
             }
-            self.view.zz_addObserver("hidden") { [weak self] (_) in
-                self?.isHidden = self?.view.isHidden ?? false
+            view.zz_addObserver("hidden", key: Item.viewObserverKey) { [weak self] _ in
+                guard let self = self else { return }
+                let hidden = self.view.isHidden
+                if self.isHidden != hidden { self.isHidden = hidden }
             }
-        }
-        
-        private func removeObserver(){
-            if self.view is UIScrollView{
-                let scView = self.view as! UIScrollView
-                scView.zz_removeObserver("contentSize")
-            }else if self.view is WKWebView{
-                let webView = self.view as! WKWebView
-                webView.zz_removeObserver("scrollView.contentSize")
-            }else{
-                self.view.zz_removeObserver("frame")
-            }
+            isHidden = view.isHidden
         }
     }
-    
+
     deinit {
-        self.zz_remoAllObservers()
+        removeAllItemObservers()
+        zz_remoAllObservers()
     }
-    
+
     override public init(frame: CGRect) {
         super.init(frame: frame)
-        self._init()
+        _init()
     }
-    
+
     public init(items: [Item] = []) {
         super.init(frame: .zero)
+        _init()
         self.items = items
-        self._init()
-        self.addItems()
+        addItems()
     }
-    
+
     required public init?(coder: NSCoder) {
         super.init(coder: coder)
-        self._init()
+        _init()
     }
-    
-    private func _init(){
-        self.zz_addObserver("contentOffset", block: { [weak self] _ in
-            self?.refreshOffset()
+
+    private func _init() {
+        zz_addObserver("contentOffset", key: ZZScrollView.contentOffsetObserverKey, block: { [weak self] _ in
+            self?.scheduleRefreshOffset()
         })
-        self.refreshOffset()
+        scheduleRefreshOffset()
     }
-    
-    public var items: [Item] = []{
-        willSet{
-            self.items.forEach({ $0.view.removeFromSuperview() })
+
+    public var items: [Item] = [] {
+        willSet {
+            items.forEach { item in
+                removeItemObservers(item)
+                item.view.removeFromSuperview()
+            }
         }
-        didSet{
-            self.addItems()
+        didSet {
+            addItems()
         }
     }
-    
-    private func addItems(){
-        self.items.forEach({
-            self.addSubview($0.view)
-            $0.zz_addObservers(["contentSize", "inset", "isHidden"], block: {[weak self] _ in
-                self?.refreshOffset()
-            })
+
+    private func removeItemObservers(_ item: Item) {
+        item.zz_removeObservers(ZZScrollView.itemObserverKeyPaths, key: ZZScrollView.itemObserverKey)
+    }
+
+    private func removeAllItemObservers() {
+        items.forEach { removeItemObservers($0) }
+    }
+
+    private func bindItemObservers(_ item: Item) {
+        removeItemObservers(item)
+        item.zz_addObservers(ZZScrollView.itemObserverKeyPaths, key: ZZScrollView.itemObserverKey, block: { [weak self] _ in
+            self?.scheduleRefreshOffset()
         })
-        self.refreshOffset()
     }
-    
-    public func refreshOffset(){
-        let offset = self.contentOffset.y
-        /*
-         1、contentSize.height 在页面内 跟着父窗体滚动
-         2、contentSize.height 超出了界面 滚动子窗体。当子窗体滚动位置在界面中完全显示之后跟着父窗体滚动
-         */
+
+    private func addItems() {
+        items.forEach { item in
+            addSubview(item.view)
+            bindItemObservers(item)
+        }
+        scheduleRefreshOffset()
+    }
+
+    private func scheduleRefreshOffset() {
+        guard !isRefreshOffsetPending else { return }
+        isRefreshOffsetPending = true
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.isRefreshOffsetPending = false
+            self.performRefreshOffset()
+        }
+    }
+
+    public func refreshOffset() {
+        scheduleRefreshOffset()
+    }
+
+    private func performRefreshOffset() {
+        let offset = contentOffset.y
         var totalHeight: CGFloat = 0
-        for index in 0 ..< self.items.count {
-            let item = self.items[index]
+        for index in 0 ..< items.count {
+            let item = items[index]
             guard !item.view.isHidden else { continue }
             var viewHeight = item.contentSize.height
             var y = totalHeight + item.inset.top
-            if (item.view is UIScrollView || item.view is WKWebView){
-                if viewHeight > self.zz_height{
-                    viewHeight = self.zz_height
+            if item.view is UIScrollView || item.view is WKWebView {
+                if viewHeight > zz_height {
+                    viewHeight = zz_height
                 }
                 var scView: UIScrollView?
-                if item.view is UIScrollView{
+                if item.view is UIScrollView {
                     scView = item.view as? UIScrollView
-                }else if item.view is WKWebView{
+                } else if item.view is WKWebView {
                     scView = (item.view as? WKWebView)?.scrollView
                 }
-                
+
                 let maxScrolY = totalHeight + item.contentSize.height + item.inset.top + item.inset.bottom
                 let minScrolY = totalHeight + item.inset.top
-                if item.contentSize.height <= self.zz_height {
-                    scView?.contentOffset = .zero
-                }else if offset >= minScrolY && offset < maxScrolY{ // scrollview 拖拽到进入 显示 到结束显示
+                if item.contentSize.height <= zz_height {
+                    if scView?.contentOffset != .zero { scView?.contentOffset = .zero }
+                } else if offset >= minScrolY && offset < maxScrolY {
                     if offset >= (maxScrolY - viewHeight - item.inset.bottom) {
                         y = (item.contentSize.height - viewHeight) + minScrolY
                         let subOffset = item.contentSize.height - viewHeight
-                        scView?.contentOffset = CGPoint(x: 0, y: subOffset)
-                    }else{
+                        let targetOffset = CGPoint(x: 0, y: subOffset)
+                        if scView?.contentOffset != targetOffset { scView?.contentOffset = targetOffset }
+                    } else {
                         y = offset
                         let subOffset = offset - minScrolY
-                        scView?.contentOffset = CGPoint(x: 0, y: subOffset)
+                        let targetOffset = CGPoint(x: 0, y: subOffset)
+                        if scView?.contentOffset != targetOffset { scView?.contentOffset = targetOffset }
                     }
-                }else{
-                    scView?.contentOffset = .zero
+                } else {
+                    if scView?.contentOffset != .zero { scView?.contentOffset = .zero }
                 }
             }
-            var viewX:CGFloat = item.inset.left
+            var viewX: CGFloat = item.inset.left
             if viewHeight < item.minHeight, item.minHeight > 0 { viewHeight = item.minHeight }
-            var viewWidth: CGFloat = self.zz_width - item.inset.left - item.inset.right
+            var viewWidth: CGFloat = zz_width - item.inset.left - item.inset.right
             if item.fixedWidth > 0 {
                 viewWidth = item.fixedWidth
-                viewX = (self.zz_width - viewWidth) / 2
+                viewX = (zz_width - viewWidth) / 2
             }
-            
+
             let newFrame = CGRect(x: viewX, y: y, width: viewWidth, height: viewHeight)
-            if item.view.frame != newFrame{
+            if item.view.frame != newFrame {
                 item.view.frame = newFrame
             }
             totalHeight += (item.contentSize.height + item.inset.top + item.inset.bottom)
         }
-        let newContentSize = CGSize(width: self.zz_width, height: totalHeight)
-        if self.contentSize != newContentSize{
-            self.contentSize = newContentSize
+        let newContentSize = CGSize(width: zz_width, height: totalHeight)
+        if contentSize != newContentSize {
+            contentSize = newContentSize
         }
-        
     }
-    
+
     override public func layoutSubviews() {
         super.layoutSubviews()
-        self.refreshOffset()
+        scheduleRefreshOffset()
     }
-    
 }
