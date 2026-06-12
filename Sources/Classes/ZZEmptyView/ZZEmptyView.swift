@@ -137,22 +137,39 @@ public class ZZEmptyView: UIView {
         imageView.isHidden = imageView.image == nil
     }
 
+    private weak var observedSuperview: UIView?
+    
     override public func didMoveToSuperview() {
         super.didMoveToSuperview()
-        if let tableView = superview as? UITableView {
-            tableView.addObserver(self, forKeyPath: "contentSize", context: nil)
-        } else if let collectionView = superview as? UICollectionView {
-            collectionView.addObserver(self, forKeyPath: "contentSize", context: nil)
+        
+        // 移除之前的观察
+        if let oldSuperview = observedSuperview, oldSuperview != superview {
+            if oldSuperview is UITableView || oldSuperview is UICollectionView {
+                oldSuperview.removeObserver(self, forKeyPath: "contentSize")
+            }
+            observedSuperview = nil
+        }
+        
+        // 添加新的观察
+        if let newSuperview = superview, observedSuperview != newSuperview {
+            if newSuperview is UITableView || newSuperview is UICollectionView {
+                newSuperview.addObserver(self, forKeyPath: "contentSize", context: nil)
+                observedSuperview = newSuperview
+            }
         }
     }
 
     deinit {
-        if self.superview is UITableView || self.superview is UICollectionView {
-            self.superview?.removeObserver(self, forKeyPath: "contentSize")
+        if let superview = observedSuperview {
+            superview.removeObserver(self, forKeyPath: "contentSize")
         }
     }
 
     override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
+        guard keyPath == "contentSize" else {
+            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+            return
+        }
         let itemsCount = superview?.itemsCount ?? 0
         if itemsCount > 0 {
             removeFromSuperview()
