@@ -25,6 +25,8 @@ public class ZZScrollView: UIScrollView {
     private static let contentOffsetObserverKey = "zzScrollView"
 
     private var isRefreshOffsetPending = false
+    private var isPerformingRefresh = false
+    private var lastLayoutBoundsSize: CGSize = .zero
 
     public class ZZScrollItem: Item { }
 
@@ -212,7 +214,25 @@ public class ZZScrollView: UIScrollView {
         scheduleRefreshOffset()
     }
 
+    /// 屏幕旋转或窗口尺寸变化后强制按当前 bounds 重排
+    public func relayoutAfterInterfaceRotation() {
+        lastLayoutBoundsSize = .zero
+        isRefreshOffsetPending = false
+        performRefreshOffset()
+    }
+
     private func performRefreshOffset() {
+        guard !isPerformingRefresh else { return }
+        isPerformingRefresh = true
+        defer { isPerformingRefresh = false }
+
+        let boundsSize = bounds.size
+        let boundsChanged = lastLayoutBoundsSize != boundsSize && boundsSize.width > 0 && boundsSize.height > 0
+        if boundsChanged {
+            lastLayoutBoundsSize = boundsSize
+            prepareItemsForCurrentBounds()
+        }
+
         let offset = contentOffset.y
         var totalHeight: CGFloat = 0
         for index in 0 ..< items.count {
@@ -263,7 +283,8 @@ public class ZZScrollView: UIScrollView {
             if item.view.frame != newFrame {
                 item.view.frame = newFrame
             }
-            totalHeight += (item.contentSize.height + item.inset.top + item.inset.bottom)
+            let stackHeight = max(item.contentSize.height, viewHeight)
+            totalHeight += (stackHeight + item.inset.top + item.inset.bottom)
         }
         let newContentSize = CGSize(width: zz_width, height: totalHeight)
         if contentSize != newContentSize {
@@ -271,8 +292,52 @@ public class ZZScrollView: UIScrollView {
         }
     }
 
+    /// 宽度变化时先把 item 拉到当前宽度，并让内部 Collection/Table 按新宽度重新计算
+    private func prepareItemsForCurrentBounds() {
+        for item in items {
+            guard !item.view.isHidden else { continue }
+            var viewWidth: CGFloat = zz_width - item.inset.left - item.inset.right
+            var viewX: CGFloat = item.inset.left
+            if item.fixedWidth > 0 {
+                viewWidth = item.fixedWidth
+                viewX = (zz_width - viewWidth) / 2
+            }
+            if abs(item.view.zz_width - viewWidth) > 0.5 || abs(item.view.zz_x - viewX) > 0.5 {
+                var frame = item.view.frame
+                frame.origin.x = viewX
+                frame.size.width = max(viewWidth, 0)
+                item.view.frame = frame
+            }
+            if let label = item.view as? ZZUILabel {
+                label.refreshFrame()
+            }
+            item.view.layoutIfNeeded()
+            invalidateNestedScrollLayouts(in: item.view)
+        }
+    }
+
+    private func invalidateNestedScrollLayouts(in view: UIView) {
+        if let collectionView = view as? UICollectionView {
+            collectionView.collectionViewLayout.invalidateLayout()
+            collectionView.setNeedsLayout()
+            collectionView.layoutIfNeeded()
+            return
+        }
+        if let tableView = view as? UITableView {
+            tableView.setNeedsLayout()
+            tableView.layoutIfNeeded()
+            return
+        }
+        view.subviews.forEach { invalidateNestedScrollLayouts(in: $0) }
+    }
+
     override public func layoutSubviews() {
         super.layoutSubviews()
+        if bounds.size != lastLayoutBoundsSize {
+            isRefreshOffsetPending = false
+            performRefreshOffset()
+            return
+        }
         scheduleRefreshOffset()
     }
 }
