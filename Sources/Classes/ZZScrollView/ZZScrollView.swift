@@ -27,6 +27,7 @@ public class ZZScrollView: UIScrollView {
     private var isRefreshOffsetPending = false
     private var isPerformingRefresh = false
     private var lastLayoutBoundsSize: CGSize = .zero
+    private var refreshGeneration: UInt = 0
 
     public class ZZScrollItem: Item { }
 
@@ -203,8 +204,11 @@ public class ZZScrollView: UIScrollView {
     private func scheduleRefreshOffset() {
         guard !isRefreshOffsetPending else { return }
         isRefreshOffsetPending = true
+        refreshGeneration += 1
+        let generation = refreshGeneration
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
+            guard generation == self.refreshGeneration else { return }
             self.isRefreshOffsetPending = false
             self.performRefreshOffset()
         }
@@ -214,9 +218,17 @@ public class ZZScrollView: UIScrollView {
         scheduleRefreshOffset()
     }
 
+    /// 立即重排，并作废已排队的异步 refresh，便于包进 UIView.animate
+    public func refreshOffsetImmediately() {
+        refreshGeneration += 1
+        isRefreshOffsetPending = false
+        performRefreshOffset()
+    }
+
     /// 屏幕旋转或窗口尺寸变化后强制按当前 bounds 重排
     public func relayoutAfterInterfaceRotation() {
         lastLayoutBoundsSize = .zero
+        refreshGeneration += 1
         isRefreshOffsetPending = false
         performRefreshOffset()
     }
